@@ -181,8 +181,9 @@ function initMenu() {
 	}, false);
 
 	var enemies = [];
+	var blank = [];
 	var colors = ['#2ecc71', '#1abc9c', '#f39c12', '#34495e', '#f1c40f', '#7f8c8d', '#e67e22', '#3498db'];
-	var player = new Player(winwidth / 2, winheight / 2, enemies);
+	var player = new Player(winwidth / 2, winheight / 2, blank);
 
 	var makeEnemy = function(side) {
 		if (side === 0) {
