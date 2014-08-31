@@ -40,7 +40,7 @@ Ball.prototype.update = function(delta, canvas, array) {
 
 		if (this.alive && this.radius < this.target.radius && collision(this,this.target)) {
 			this.alive = false;
-			this.target.radius += this.radius / 2;
+			this.target.radius += this.radius * 0.25;
 			this.target.color = this.color;
 			score += Math.round(this.radius * 5);
 			var index = this.target.enemies.indexOf(this);
@@ -101,7 +101,7 @@ Player.prototype.update = function(delta, canvas) {
 		for (var i = 0; i < this.enemies.length; i++) {
 			if (this.enemies[i].alive && this.enemies[i].radius < this.radius && collision(this,this.enemies[i])) {
 				this.enemies[i].alive = false;
-				this.radius += this.enemies[i].radius / 2;
+				this.radius += this.enemies[i].radius * 0.25;
 				this.color = this.enemies[i].color;
 				score += Math.round(this.enemies[i].radius * 5);
 				var index = this.enemies.indexOf(this.enemies[i]);
@@ -210,28 +210,28 @@ function initGame() {
 	var makeEnemy = function(side) {
 		if (side === 0) {
 			var randY = Math.round(Math.random() * winheight);
-			var ranRadius = Math.round(Math.random() * 2 * player.radius);
+			var ranRadius = Math.round(Math.random() * 1.25 * player.radius);
 			var color = colors[Math.round(Math.random() * colors.length)];
 			var speed = Math.round(Math.random() * 5) + 1;
 			var enemy = new Ball(0, randY, ranRadius, color, speed, 0, player);
 			enemies.push(enemy);
 		} else if (side === 1) {
 			var randX = Math.round(Math.random() * winwidth);
-			var ranRadius = Math.round(Math.random() * 2 * player.radius);
+			var ranRadius = Math.round(Math.random() * 1.25 * player.radius);
 			var color = colors[Math.round(Math.random() * colors.length)];
 			var speed = Math.round(Math.random() * 5) + 1;
 			var enemy = new Ball(randX, 0, ranRadius, color, 0, speed, player);
 			enemies.push(enemy);
 		} else if (side === 2) {
 			var randY = Math.round(Math.random() * winheight);
-			var ranRadius = Math.round(Math.random() * 2 * player.radius);
+			var ranRadius = Math.round(Math.random() * 1.25 * player.radius);
 			var color = colors[Math.round(Math.random() * colors.length)];
 			var speed = Math.round(Math.random() * 5) + 1;
 			var enemy = new Ball(winwidth, randY, ranRadius, color, speed * -1, 0, player);
 			enemies.push(enemy);
 		} else if (side === 3) {
 			var randX = Math.round(Math.random() * winwidth);
-			var ranRadius = Math.round(Math.random() * 2 * player.radius);
+			var ranRadius = Math.round(Math.random() * 1.25 * player.radius);
 			var color = colors[Math.round(Math.random() * colors.length)];
 			var speed = Math.round(Math.random() * 5) + 1;
 			var enemy = new Ball(randX, 0, ranRadius, color, 0, speed * -1, player);
