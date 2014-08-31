@@ -452,6 +452,8 @@ function initGame() {
 			ctx.clearRect(0, 0, canvas.width, canvas.height);
 			document.body.removeChild(gc);
 			firstload = false;
+			then = Date.now();
+			start = Date.now();
 			initGame();
 			//location.reload();
 		}
