@@ -1,18 +1,15 @@
-Ball Simulator 2015 - Phaser.js Edition
+Ball Simulator 2015 - JavaScript Edition
 ==========
 ***Because I'm bored***
 
-A remake of my friends iOS game, using Phaser.js
+Made in one night with boredom, javascript, and HTML5.
+
+Special thanks to Logan Engstrom for prettifying the colors.
 
 
-ToDo
-=====
+How To Play
+=============
 
-* Circular canvas
-* site color changes
-* use html/css for menu buttons
-* see if css can work on phaser objects
-* when you eat a ball you get it's size * opacity added to your size
-* special ball thats a bit bigger than you, glows and sparkles, moves slow. you eat that and you're invincible for 10 seconds, small balls are all green and bigger are all red
-* as time goes on, random speed gets shifter higher, and random ball size scales. the proportion scales too. so beginning is 75% smaller ones, and goes down to 10% smaller as time goes on, and the range is always half your size to 1.5 your size
-* the chances of special ball is better when more people play at same time, look into google analytics
+Do you seriously not know how to play this sort of game? Whatever. WASD to move. Eat the smaller circles by touching them, and avoid the larger circles. Tell your friends! Compare high scores! And for the love of god don't realize this is a clone of the other 2000 circle games!
+
+![preview](preview.png)
