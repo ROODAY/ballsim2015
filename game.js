@@ -6,15 +6,17 @@ music.addEventListener('ended', function() {
 }, false);
 music.play();
 
+var winwidth = document.documentElement.clientWidth;
+var winheight = document.documentElement.clientHeight;
+var clientarea = winwidth * winheight;
+var screenarea = 2073600;
+var screenscale = clientarea / screenarea;
+
 var currentcanvas;
 var keysDown = {};
 var gameOver = false;
-var winwidth = 0;
-var winheight = 0;
 var score = 0;
-var screenscale = 1;
-var screenarea = 2073600;
-var enemycap = 50;
+var enemycap = Math.floor(50 * screenscale);
 var firstload = true;
 
 Filler = function(x, y, radius, color, vx, vy) {
@@ -65,26 +67,37 @@ Ball.prototype.update = function(delta, canvas, array) {
 		this.x += this.vx;
 		this.y += this.vy;
 
-		if (this.x < (0 - this.radius) || this.x > (winwidth + this.radius) || this.y < (0 - this.radius) || this.y > (winheight + this.radius)) {
+		//if (this.x < (0 - this.radius) || this.x > (winwidth + this.radius) || this.y < (0 - this.radius) || this.y > (winheight + this.radius)) {
+		if (this.x < (0) || this.x > (winwidth) || this.y < (0) || this.y > (winheight)) {
 			this.alive = false;
 			var index = array.indexOf(this);
 			array.splice(index, 1);
 		}
 
-		if (this.alive && this.radius < this.target.radius && collision(this,this.target)) {
+		if ((this.alive) && (this.radius < this.target.radius) && (collision(this,this.target))) {
+			console.log("Alive: " + this.alive + ". Ball velocity: (" + this.vx + ", " + this.vy + ").");
 			this.alive = false;
-			this.target.radius += this.radius * 0.25;
+			this.target.radius = Math.round(this.target.radius + this.radius * 0.25);
 			this.target.color = this.color;
 			score += Math.round(this.radius * 5);
 			var index = this.target.enemies.indexOf(this);
 			this.target.enemies.splice(index, 1);
 			var sound = new Audio("assets/sounds/kill.wav");
 			sound.play();
-		} else if (this.alive && this.radius >= this.target.radius && collision(this,this.target)) {
+		} else if ((this.alive) && (this.radius >= this.target.radius) && (collision(this,this.target))) {
+			console.log("Alive: " + this.alive + ". Ball velocity: (" + this.vx + ", " + this.vy + ").");
 			this.target.alive = false;
+			this.alive = false;
+			var index = this.target.enemies.indexOf(this);
+			this.target.enemies.splice(index, 1);
 			gameOver = true;
 			var sound = new Audio("assets/sounds/death.wav");
 			sound.play();
+		}
+
+		if (!this.alive) {
+			var index = this.target.enemies.indexOf(this);
+			this.target.enemies.splice(index, 1);
 		}
 	}
 }
@@ -130,24 +143,6 @@ Player.prototype.update = function(delta, canvas) {
 				this.y += this.speed * delta;
 			}
 		}
-
-		for (var i = 0; i < this.enemies.length; i++) {
-			if (this.enemies[i].alive && this.enemies[i].radius < this.radius && collision(this,this.enemies[i])) {
-				this.enemies[i].alive = false;
-				this.radius += this.enemies[i].radius * 0.25;
-				this.color = this.enemies[i].color;
-				score += Math.round(this.enemies[i].radius * 5);
-				var index = this.enemies.indexOf(this.enemies[i]);
-				this.enemies.splice(index, 1);
-				var sound = new Audio("assets/sounds/kill.wav");
-				sound.play();
-			} else if (this.enemies[i].alive && this.enemies[i].radius >= this.radius && collision(this,this.enemies[i])) {
-				this.alive = false;
-				gameOver = true;
-				var sound = new Audio("assets/sounds/death.wav");
-				sound.play();
-			}
-		}
 	}
 }
 
@@ -184,8 +179,6 @@ function initMenu() {
 	var canvas = document.getElementById('menu');
 	currentcanvas = "menu";
 	var ctx = canvas.getContext('2d');
-	winwidth = document.documentElement.clientWidth;
-	winheight = document.documentElement.clientHeight;
 	canvas.width = winwidth;
 	canvas.height = winheight;
 
@@ -306,11 +299,6 @@ function initGame() {
 	var canvas = document.getElementById("game");
 	var ctx = canvas.getContext('2d');
 	currentcanvas = "game";
-	winwidth = document.documentElement.clientWidth;
-	winheight = document.documentElement.clientHeight;
-	var clientarea = winwidth * winheight;
-	screenscale = clientarea / screenarea;
-	enemycap = enemycap * screenscale;
 	canvas.width = winwidth;
 	canvas.height = winheight;
 	score = 0;
@@ -325,29 +313,29 @@ function initGame() {
 			var randY = Math.round(Math.random() * winheight);
 			var ranRadius = Math.round(Math.random() * 1.25 * player.radius);
 			var color = colors[Math.round(Math.random() * colors.length)];
-			var speed = Math.round(Math.random() * 5) + 1;
-			var enemy = new Ball(0, randY, ranRadius, color, speed, 0, player);
+			var speed = Math.round(Math.random() * 4) + 1;
+			var enemy = new Ball(1, randY, ranRadius, color, speed, 0, player);
 			enemies.push(enemy);
 		} else if (side === 1) {
 			var randX = Math.round(Math.random() * winwidth);
 			var ranRadius = Math.round(Math.random() * 1.25 * player.radius);
 			var color = colors[Math.round(Math.random() * colors.length)];
-			var speed = Math.round(Math.random() * 5) + 1;
-			var enemy = new Ball(randX, 0, ranRadius, color, 0, speed, player);
+			var speed = Math.round(Math.random() * 4) + 1;
+			var enemy = new Ball(randX, 1, ranRadius, color, 0, speed, player);
 			enemies.push(enemy);
 		} else if (side === 2) {
 			var randY = Math.round(Math.random() * winheight);
 			var ranRadius = Math.round(Math.random() * 1.25 * player.radius);
 			var color = colors[Math.round(Math.random() * colors.length)];
-			var speed = Math.round(Math.random() * 5) + 1;
-			var enemy = new Ball(winwidth, randY, ranRadius, color, speed * -1, 0, player);
+			var speed = Math.round(Math.random() * 4) + 1;
+			var enemy = new Ball(winwidth - 1, randY, ranRadius, color, speed * -1, 0, player);
 			enemies.push(enemy);
 		} else if (side === 3) {
 			var randX = Math.round(Math.random() * winwidth);
 			var ranRadius = Math.round(Math.random() * 1.25 * player.radius);
 			var color = colors[Math.round(Math.random() * colors.length)];
-			var speed = Math.round(Math.random() * 5) + 1;
-			var enemy = new Ball(randX, 0, ranRadius, color, 0, speed * -1, player);
+			var speed = Math.round(Math.random() * 4) + 1;
+			var enemy = new Ball(randX, winheight - 1, ranRadius, color, 0, speed * -1, player);
 			enemies.push(enemy);
 		}
 	}
@@ -384,8 +372,6 @@ function initGame() {
 		if (enemies.length <= enemycap) {
 			makeEnemy(Math.round(Math.random() * 4));
 		}
-
-		score += Math.floor((Date.now() - start) / 1000);
 	};
 
 	var clearScreen = function() {
@@ -446,6 +432,10 @@ function initGame() {
 			score = 0;
 			enemies.forEach(function(ball){
 				ball.alive = false;
+				ball.x = 0;
+				ball.y = 0;
+				ball.vx = 0;
+				ball.vy = 0;
 			});
 			enemies.length = 0;
 			player.radius = 10;
@@ -453,7 +443,6 @@ function initGame() {
 			document.body.removeChild(gc);
 			firstload = false;
 			then = Date.now();
-			start = Date.now();
 			initGame();
 			//location.reload();
 		}
