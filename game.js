@@ -67,7 +67,6 @@ Ball.prototype.update = function(delta, canvas, array) {
 		this.x += this.vx;
 		this.y += this.vy;
 
-		//if (this.x < (0 - this.radius) || this.x > (winwidth + this.radius) || this.y < (0 - this.radius) || this.y > (winheight + this.radius)) {
 		if (this.x < (0) || this.x > (winwidth) || this.y < (0) || this.y > (winheight)) {
 			this.alive = false;
 			var index = array.indexOf(this);
