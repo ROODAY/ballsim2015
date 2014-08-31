@@ -15,6 +15,7 @@ var score = 0;
 var screenscale = 1;
 var screenarea = 2073600;
 var enemycap = 50;
+var firstload = true;
 
 Filler = function(x, y, radius, color, vx, vy) {
 	this.x = x;
@@ -403,6 +404,15 @@ function initGame() {
 		ctx.fillStyle = "white";
 		ctx.textAlign = "center";
 		ctx.fillText(score, winwidth / 2, 30);
+
+		if (((Date.now() - start) / 1000 <= 10) && firstload) {
+			ctx.font = "20pt Arial";
+			ctx.fillStyle = "white";
+			ctx.textAlign = "left";
+			ctx.fillText("WASD to move", 10, 40);
+			ctx.fillText("Eat the smaller circles", 10, 65);
+			ctx.fillText("Avoid the larger ones", 10, 90);
+		}
 	};
 
 	var lose = function() {
@@ -441,6 +451,7 @@ function initGame() {
 			player.radius = 10;
 			ctx.clearRect(0, 0, canvas.width, canvas.height);
 			document.body.removeChild(gc);
+			firstload = false;
 			initGame();
 			//location.reload();
 		}
