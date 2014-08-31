@@ -144,6 +144,10 @@ function collision (a,b) {
 }
 
 function initMenu() {
+	var gc = document.createElement('canvas');
+	gc.id = 'menu';
+	document.body.appendChild(gc);
+
 	var canvas = document.getElementById('menu');
 	currentcanvas = "menu";
 	var ctx = canvas.getContext('2d');
@@ -151,11 +155,6 @@ function initMenu() {
 	winheight = document.documentElement.clientHeight;
 	canvas.width = winwidth;
 	canvas.height = winheight;
-
-	ctx.font = "30pt Arial";
-	ctx.fillStyle = "white";
-	ctx.textAlign = "center";
-	ctx.fillText("Ball Simulator 2015", winwidth / 2, 50);
 
 	var elements = [];
 	elements.push({
@@ -166,14 +165,6 @@ function initMenu() {
 		left: winwidth / 2 - 100
 	});
 
-	elements.forEach(function(element) {
-		ctx.fillStyle = element.color;
-		ctx.fillRect(element.left, element.top, element.width, element.height);
-	});
-
-	ctx.fillStyle = "black";
-	ctx.fillText("Start", winwidth / 2, winheight / 2 + 100);
-
 	canvas.addEventListener('click', function(e) {
 		var cLeft = canvas.offsetLeft;
 		var cTop = canvas.offsetTop;
@@ -183,13 +174,102 @@ function initMenu() {
 		elements.forEach(function(element) {
 			if (y > element.top && y < element.top + element.height && x > element.left && x < element.left + element.width) {
 				ctx.clearRect(0, 0, canvas.width, canvas.height);
+				document.body.removeChild(gc);
 				initGame();
 			}
 		});
 	}, false);
+
+	var enemies = [];
+	var colors = ['#2ecc71', '#1abc9c', '#f39c12', '#34495e', '#f1c40f', '#7f8c8d', '#e67e22', '#3498db'];
+	var player = new Player(winwidth / 2, winheight / 2, enemies);
+
+	var makeEnemy = function(side) {
+		if (side === 0) {
+			var randY = Math.round(Math.random() * winheight);
+			var ranRadius = Math.round(Math.random() * 1.25 * player.radius);
+			var color = colors[Math.round(Math.random() * colors.length)];
+			var speed = Math.round(Math.random() * 5) + 1;
+			var enemy = new Ball(0, randY, ranRadius, color, speed, 0, player);
+			enemies.push(enemy);
+		} else if (side === 1) {
+			var randX = Math.round(Math.random() * winwidth);
+			var ranRadius = Math.round(Math.random() * 1.25 * player.radius);
+			var color = colors[Math.round(Math.random() * colors.length)];
+			var speed = Math.round(Math.random() * 5) + 1;
+			var enemy = new Ball(randX, 0, ranRadius, color, 0, speed, player);
+			enemies.push(enemy);
+		} else if (side === 2) {
+			var randY = Math.round(Math.random() * winheight);
+			var ranRadius = Math.round(Math.random() * 1.25 * player.radius);
+			var color = colors[Math.round(Math.random() * colors.length)];
+			var speed = Math.round(Math.random() * 5) + 1;
+			var enemy = new Ball(winwidth, randY, ranRadius, color, speed * -1, 0, player);
+			enemies.push(enemy);
+		} else if (side === 3) {
+			var randX = Math.round(Math.random() * winwidth);
+			var ranRadius = Math.round(Math.random() * 1.25 * player.radius);
+			var color = colors[Math.round(Math.random() * colors.length)];
+			var speed = Math.round(Math.random() * 5) + 1;
+			var enemy = new Ball(randX, 0, ranRadius, color, 0, speed * -1, player);
+			enemies.push(enemy);
+		}
+	}
+
+	var main = function() {
+		var now = Date.now();
+		var delta = now - then;
+		update(delta / 1000);
+		render();
+		then = now;
+		requestAnimationFrame(main);
+	};
+
+	var update = function(delta) {
+		enemies.forEach(function(ball) {
+			ball.update(delta, canvas, enemies);
+		});
+
+		if (enemies.length <= enemycap) {
+			makeEnemy(Math.round(Math.random() * 4));
+		}
+	};
+
+	var clearScreen = function() {
+		ctx.clearRect(0,0,canvas.width,canvas.height);
+	};
+
+	var render = function() {
+		clearScreen();
+
+		enemies.forEach(function(ball){
+			ball.draw(ctx);
+		});
+
+		ctx.font = "30pt Arial";
+		ctx.fillStyle = "white";
+		ctx.textAlign = "center";
+		ctx.fillText("Ball Simulator 2015", winwidth / 2, 50);
+
+		elements.forEach(function(element) {
+			ctx.fillStyle = element.color;
+			ctx.fillRect(element.left, element.top, element.width, element.height);
+		});
+
+		ctx.fillStyle = "black";
+		ctx.fillText("Start", winwidth / 2, winheight / 2 + 100);
+
+	};
+
+	var then = Date.now();
+	main();
 }
 
 function initGame() {
+	var gc = document.createElement('canvas');
+	gc.id = 'game';
+	document.body.appendChild(gc);
+
 	var canvas = document.getElementById("game");
 	var ctx = canvas.getContext('2d');
 	currentcanvas = "game";
@@ -320,7 +400,7 @@ function initGame() {
 		var y = event.pageY - cTop;
 
 		if (y > canvas.height - 150 && y < canvas.height - 150 + 75 && x > canvas.width / 2 - 100 && x < canvas.width / 2 - 100 + 200 && gameOver) {
-			/*gameOver = false;
+			gameOver = false;
 			score = 0;
 			enemies.forEach(function(ball){
 				ball.alive = false;
@@ -328,8 +408,9 @@ function initGame() {
 			enemies = [];
 			player.radius = 10;
 			ctx.clearRect(0, 0, canvas.width, canvas.height);
-			initGame();*/
-			location.reload();
+			document.body.removeChild(gc);
+			initGame();
+			//location.reload();
 		}
 	}, false);
 
